@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gitspector", "Gitspector\Gitspector.csproj", "{9121A1CA-50F3-4633-B157-CC12F45A4DBF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gitspector.CLI", "Gitspector.cli\Gitspector.CLI.csproj", "{397A2B39-6C73-47FD-9BE7-778C07CA712D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gitspector.CLI", "Gitspector.CLI\Gitspector.CLI.csproj", "{397A2B39-6C73-47FD-9BE7-778C07CA712D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
