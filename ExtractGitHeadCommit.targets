@@ -1,0 +1,37 @@
+<!--
+     Usage:
+
+     Import this .target file:
+        <Import Project="ExtractGitHeadCommit.target" />
+
+     Then call the ExtractGitHeadCommit target in the PreBuild target:
+        <CallTarget Targets="ExtractGitHeadCommit" />
+ -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <!-- Default (fallback) parameters -->
+    <PropertyGroup>
+        <GitspectorAssemblyFile Condition="'$(GitspectorAssemblyFile)'==''">Gitspector.dll</GitspectorAssemblyFile>
+        <GitRepoPath Condition="'$(GitRepoPath)'==''">$(ProjectDir)</GitRepoPath>
+        <GitHeadCommitOutputFile Condition="'$(GitHeadCommitOutputFile)'==''">git_head_commit.txt</GitHeadCommitOutputFile>
+    </PropertyGroup>
+
+    <!-- Include the task from the assembly -->
+    <UsingTask
+        AssemblyFile="$(GitspectorAssemblyFile)"
+        TaskName="Gitspector.Tasks.InspectGitRepo" />
+
+    <!-- Encorporate the whole inspection process into a new target -->
+    <Target Name="ExtractGitHeadCommit">
+        <InspectGitRepo StartLookingInDir="$(GitRepoPath)">
+            <Output TaskParameter="HeadCommit" ItemName="GitHeadCommit" />
+        </InspectGitRepo>
+        <WriteLinesToFile
+            File="$(GitHeadCommitOutputFile)"
+            Lines="@(GitHeadCommit)" Overwrite="true" />
+        <Error
+            Text="Git HEAD commit not saved."
+            Condition="!Exists('$(GitHeadCommitOutputFile)')" />
+        <Message 
+            Text="Git HEAD commit saved into $(GitHeadCommitOutputFile)." />
+    </Target>
+</Project>

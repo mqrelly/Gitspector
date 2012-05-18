@@ -1,7 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- Include Gitspector -->
-  <UsingTask AssemblyFile="Gitspector.dll" TaskName="Gitspector.Tasks.InspectGitRepo" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -52,22 +50,18 @@
     <EmbeddedResource Include="git-head-sha1.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+  <PropertyGroup>
+      <GitspectorAssemblyFile>$(ProjectDir)Gitspector.dll</GitspectorAssemblyFile>
+      <GitHeadCommitOutputFile>git-head-sha1.txt</GitHeadCommitOutputFile>
+  </PropertyGroup>
+  <Import Project="..\ExtractGitHeadCommit.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="AfterBuild">
   </Target>
   -->
-  <PropertyGroup>
-    <GitRepoDir>$(ProjectDir)../.git</GitRepoDir>
-    <GitHeadFile>$(GitRepoDir)/HEAD</GitHeadFile>
-  </PropertyGroup>
   <Target Name="BeforeBuild">
-    <Error Text="Git repo dir not found: $(GitRepoDir)" Condition="!Exists('$(GitRepoDir)')" />
-    <InspectGitRepo StartLookingInDir="$(ProjectDir)">
-      <Output TaskParameter="HeadCommit" ItemName="GitHeadCommit" />
-    </InspectGitRepo>
-    <WriteLinesToFile File="git-head-sha1.txt" Lines="@(GitHeadCommit)" Overwrite="true" />
-    <Error Text="Git head commit not saved." Condition="!Exists('git-head-sha1.txt')" />
-    <Message Text="Git HEAD commit saved." />
+      <CallTarget Targets="ExtractGitHeadCommit" />
   </Target>
 </Project>
