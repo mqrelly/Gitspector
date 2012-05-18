@@ -1,18 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Include Gitspector -->
+  <UsingTask AssemblyFile="Gitspector.dll" TaskName="Gitspector.Tasks.InspectGitRepo" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{397A2B39-6C73-47FD-9BE7-778C07CA712D}</ProjectGuid>
+    <ProjectGuid>{4DEB3BB1-8F10-4A4A-887B-87E3A9A7DD4F}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Gitspector.Cli</RootNamespace>
-    <AssemblyName>gitspect</AssemblyName>
+    <RootNamespace>Gitspector.BuildTaskTest</RootNamespace>
+    <AssemblyName>Gitspector.BuildTaskTest</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -48,20 +49,25 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Gitspector\Gitspector.csproj">
-      <Project>{9121A1CA-50F3-4633-B157-CC12F45A4DBF}</Project>
-      <Name>Gitspector</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
+    <EmbeddedResource Include="git-head-sha1.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <GitRepoDir>$(ProjectDir)../.git</GitRepoDir>
+    <GitHeadFile>$(GitRepoDir)/HEAD</GitHeadFile>
+  </PropertyGroup>
+  <Target Name="BeforeBuild">
+    <Error Text="Git repo dir not found: $(GitRepoDir)" Condition="!Exists('$(GitRepoDir)')" />
+    <InspectGitRepo StartLookingInDir="$(ProjectDir)">
+      <Output TaskParameter="HeadCommit" ItemName="GitHeadCommit" />
+    </InspectGitRepo>
+    <WriteLinesToFile File="git-head-sha1.txt" Lines="@(GitHeadCommit)" Overwrite="true" />
+    <Error Text="Git head commit not saved." Condition="!Exists('git-head-sha1.txt')" />
+    <Message Text="Git HEAD commit saved." />
+  </Target>
 </Project>
