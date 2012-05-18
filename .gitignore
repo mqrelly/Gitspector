@@ -8,11 +8,8 @@
 [Bb]in/
 [Oo]bj/
 
+# Test file
+git-head-sha1.txt
+
 # Backups
 *.bak
-
-# Report generation
-tools/partcover.bat
-tools/xunit-console.bat
-tools/reportgenerator.bat
-reports/
